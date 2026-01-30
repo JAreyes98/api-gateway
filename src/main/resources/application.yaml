@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: healthconnect-api-gateway
+  cloud:
+    gateway:
+      routes:
+        # Patient Service (Java en contenedor puerto 8081)
+        - id: patient-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/patients/**, /api/v1/doctype/**, /api/v1/medical-records/**, /api/v1/replication/**
+
+        # Storage Service (Go en contenedor puerto 8082)
+        - id: storage-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/files/**
+
+        # Audit Hub Service (Python en contenedor puerto 8000)
+        - id: audit-hub-service
+          uri: http://localhost:8000
+          predicates:
+            - Path=/api/v1/audit/**
+          filters:
+            - StripPrefix=2
