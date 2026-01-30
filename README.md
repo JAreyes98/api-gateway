@@ -2,7 +2,7 @@
 
 This service acts as the single **Entry Point** for the **HealthConnect** ecosystem. It utilizes **Spring Cloud Gateway** to centralize traffic, manage security, and route requests to the corresponding microservices (Java, Go, and Python).
 
-![HealthConnect Architecture](./assets/dapi-gateway.jpg)
+![HealthConnect Architecture](./assets/api-gateway.jpg)
 
 ---
 
