@@ -1,4 +1,4 @@
-package com.jdreyes.api_gate_way;
+package com.jdreyes.healthconnect_api_gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
