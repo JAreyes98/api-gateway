@@ -51,3 +51,16 @@ spring:
             - Path=/api/v1/audit/**
           filters:
             - StripPrefix=2
+
+### Build Docker image
+``` bash
+docker build -t healthconnect-gateway:1.0.0 .
+
+### Run Docker container
+``` bash
+docker run -d 
+  --name healthconnect-gateway 
+  --network healthconnect-net 
+  -p 8083:8083 
+  -e JWT_SECRET=FW7cinngzgetduqR54MknwdJpxKY0EePuQDNIZKHek= 
+  healthconnect-auth-service:1.0.0
