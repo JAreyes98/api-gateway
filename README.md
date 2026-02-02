@@ -59,8 +59,11 @@ docker build -t healthconnect-gateway:1.0.0 .
 ### Run Docker container
 ``` bash
 docker run -d 
-  --name healthconnect-gateway 
+  --name healthconnect-api-gateway 
   --network healthconnect-net 
-  -p 8083:8083 
-  -e JWT_SECRET=FW7cinngzgetduqR54MknwdJpxKY0EePuQDNIZKHek= 
-  healthconnect-auth-service:1.0.0
+  -p 9090:9090 
+  -e AUTH_SERVICE_URL=http://healthconnect-auth-service:8083 
+  -e PATIENT_SERVICE_URL=http://healthconnect-patient-service:8081 
+  -e STORAGE_SERVICE_URL=http://healthconnect-storage-service:8082 
+  -e AUDIT_SERVICE_URL=http://healthconnect-audit-hub:8000 
+  healthconnect-gateway:1.0.0

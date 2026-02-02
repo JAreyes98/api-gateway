@@ -22,27 +22,38 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     public static class Config {}
 
     @Override
-    public GatewayFilter apply(Config config) {
-        return (exchange, chain) -> {
-            String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+public GatewayFilter apply(Config config) {
+    return (exchange, chain) -> {
+        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return onError(exchange, "No token provided", HttpStatus.UNAUTHORIZED);
-            }
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("DEBUG: No auth header found or wrong format");
+            return onError(exchange, "Missing or invalid Authorization header", HttpStatus.UNAUTHORIZED);
+        }
 
-            String token = authHeader.substring(7);
+        String token = authHeader.substring(7);
 
+        try {
             if (!jwtUtils.validateJwtToken(token)) {
-                return onError(exchange, "Invalid token", HttpStatus.UNAUTHORIZED);
+                System.out.println("DEBUG: Token validation failed in JwtUtils");
+                return onError(exchange, "Invalid JWT Token - Validation failed", HttpStatus.UNAUTHORIZED);
             }
+        } catch (Exception e) {
+            System.out.println("DEBUG: Exception during token validation: " + e.getMessage());
+            return onError(exchange, "Token error: " + e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
 
-            // Simplemente pasamos el exchange original sin tocar nada
-            return chain.filter(exchange);
-        };
-    }
+        return chain.filter(exchange);
+    };
+}
 
-    private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
-        exchange.getResponse().setStatusCode(httpStatus);
-        return exchange.getResponse().setComplete();
-    }
+private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
+    exchange.getResponse().setStatusCode(httpStatus);
+    exchange.getResponse().getHeaders().add(HttpHeaders.CONTENT_TYPE, "application/json");
+    
+    // Esto enviará el mensaje de error al frontend en el campo 'data' de Axios
+    byte[] bytes = String.format("{\"error\": \"%s\"}", err).getBytes();
+    return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
+            .bufferFactory().wrap(bytes)));
+}
 }

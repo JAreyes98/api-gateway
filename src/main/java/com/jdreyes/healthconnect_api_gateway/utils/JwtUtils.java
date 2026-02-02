@@ -23,6 +23,7 @@ public class JwtUtils {
 
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+                
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -54,10 +55,14 @@ public class JwtUtils {
                 .build()
                 .parseClaimsJws(authToken);
             return true;
+        } catch (io.jsonwebtoken.security.SignatureException e) {
+            System.out.println("JWT Error: JTW signature does not match. Check JWT_SECRET.");
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            System.out.println("JWT Error: Token expired.");
         } catch (Exception e) {
-            // Aquí puedes loguear: "JWT signature does not match" o "Expired"
-            return false;
+            System.out.println("JWT Error: " + e.getMessage());
         }
+        return false;
     }
 
     public String getUsernameFromJwtToken(String token) {
