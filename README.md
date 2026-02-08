@@ -62,8 +62,8 @@ docker run -d
   --name healthconnect-api-gateway 
   --network healthconnect-net 
   -p 9090:9090 
-  -e AUTH_SERVICE_URL=http://healthconnect-auth-service:8083 
+  -e AUTH_SERVICE_URL=https://auth-service-6pem.onrender.com
   -e PATIENT_SERVICE_URL=http://healthconnect-patient-service:8081 
   -e STORAGE_SERVICE_URL=http://healthconnect-storage-service:8082 
-  -e AUDIT_SERVICE_URL=http://healthconnect-audit-hub:8000 
+  -e AUDIT_SERVICE_URL=https://audit-hub-service.onrender.com
   healthconnect-gateway:1.0.0
